@@ -1,0 +1,26 @@
+#Add that file to /etc/init.d and give it to start permission 
+#sudo chmod +x /etc/init.d/S50seriallink
+
+#!/bin/sh
+
+mkdir -p /dev/serial/by-id/
+mkdir -p /dev/serial/by-path/
+
+for dev in /dev/ttyACM*; do
+  [ ! -e "$dev" ] && continue
+  base=$(basename $dev)
+  usb_path=/sys/class/tty/$base/device/../../
+
+  vendor=$(cat $usb_path/idVendor 2>/dev/null || echo "unknown_vendor")
+  product=$(cat $usb_path/idProduct 2>/dev/null || echo "unknown_product")
+  serial=$(cat $usb_path/serial 2>/dev/null || echo "noserial")
+
+  # by-id formatında isim
+  link_name="usb-${vendor}_${product}_${serial}_${base}-if00-port0"
+
+  ln -sf /dev/$base /dev/serial/by-id/$link_name
+  path=$(readlink /sys/class/tty/$(basename $dev)/device | sed 's|../../../||')
+  ln -sf /dev/$(basename $dev) /dev/serial/by-path/$path
+
+done
+
