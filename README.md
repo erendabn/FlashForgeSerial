@@ -11,6 +11,9 @@
 > [!CAUTION]
 > *Tested with “klipper mod” made with Buildroot*
 
+>  [!CAUTION]
+> *In the Serial section, only use the by-path section. This is because the by-id section is named via ttyACM, and when you remove and reinsert the USB, this name also changes.*
+
 ---
 # Installation
 After connecting your printer to the internet, connect to it from your computer using ssh.  
